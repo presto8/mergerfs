@@ -33,6 +33,42 @@ using std::vector;
 namespace l
 {
   static
+  void
+  set_stat_if_leads_to_dir(const std::string &path_,
+                           struct stat       *st_)
+  {
+    int rv;
+    struct stat st;
+
+    rv = fs::stat(path_,&st);
+    if(rv == -1)
+      return;
+
+    if(S_ISDIR(st.st_mode))
+      *st_ = st;
+
+    return;
+  }
+
+  static
+  void
+  set_stat_if_leads_to_reg(const std::string &path_,
+                           struct stat       *st_)
+  {
+    int rv;
+    struct stat st;
+
+    rv = fs::stat(path_,&st);
+    if(rv == -1)
+      return;
+
+    if(S_ISREG(st.st_mode))
+      *st_ = st;
+
+    return;
+  }
+
+  static
   int
   getattr_controlfile(struct stat *st_)
   {
@@ -65,7 +101,8 @@ namespace l
           const char           *fusepath_,
           struct stat          *st_,
           const bool            symlinkify_,
-          const time_t          symlinkify_timeout_)
+          const time_t          symlinkify_timeout_,
+          FollowSymlinks        followsymlinks_)
   {
     int rv;
     string fullpath;
@@ -77,7 +114,28 @@ namespace l
 
     fullpath = fs::path::make(basepaths[0],fusepath_);
 
-    rv = fs::lstat(fullpath,st_);
+    switch(followsymlinks_)
+      {
+      case FollowSymlinks::ENUM::NEVER:
+        rv = fs::lstat(fullpath,st_);
+        break;
+      case FollowSymlinks::ENUM::DIRECTORY:
+        rv = fs::lstat(fullpath,st_);
+        if(S_ISLNK(st_->st_mode))
+          l::set_stat_if_leads_to_dir(fullpath,st_);
+        break;
+      case FollowSymlinks::ENUM::REGULAR:
+        rv = fs::lstat(fullpath,st_);
+        if(S_ISLNK(st_->st_mode))
+          l::set_stat_if_leads_to_reg(fullpath,st_);
+        break;
+      case FollowSymlinks::ENUM::ALL:
+        rv = fs::stat(fullpath,st_);
+        if(rv != 0)
+          rv = fs::lstat(fullpath,st_);
+        break;
+      }
+
     if(rv == -1)
       return -errno;
 
@@ -112,7 +170,8 @@ namespace FUSE
                     fusepath_,
                     st_,
                     config.symlinkify,
-                    config.symlinkify_timeout);
+                    config.symlinkify_timeout,
+                    config.followsymlinks);
 
     timeout_->entry = ((rv >= 0) ?
                        config.cache_entry :

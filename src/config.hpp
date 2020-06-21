@@ -17,6 +17,7 @@
 #pragma once
 
 #include "branch.hpp"
+#include "config_followsymlinks.hpp"
 #include "config_inodecalc.hpp"
 #include "config_moveonenospc.hpp"
 #include "config_nfsopenhack.hpp"
@@ -103,6 +104,7 @@ public:
   ConfigBOOL     direct_io;
   ConfigBOOL     dropcacheonclose;
   ConfigSTR      fsname;
+  FollowSymlinks followsymlinks;
   Funcs          func;
   ConfigUINT64   fuse_msg_size;
   ConfigBOOL     ignorepponrename;

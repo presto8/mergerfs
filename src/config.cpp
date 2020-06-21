@@ -80,6 +80,7 @@ Config::Config()
   direct_io(false),
   dropcacheonclose(false),
   fsname(),
+  followsymlinks(FollowSymlinks::ENUM::ALL),
   func(),
   fuse_msg_size(FUSE_MAX_MAX_PAGES),
   ignorepponrename(false),
@@ -121,6 +122,7 @@ Config::Config()
   _map["category.search"]      = &category.search;
   _map["direct_io"]            = &direct_io;
   _map["dropcacheonclose"]     = &dropcacheonclose;
+  _map["followsymlinks"]       = &followsymlinks;
   _map["fsname"]               = &fsname;
   _map["func.access"]          = &func.access;
   _map["func.chmod"]           = &func.chmod;
