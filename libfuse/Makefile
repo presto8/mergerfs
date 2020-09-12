@@ -109,7 +109,6 @@ strip:
 install-utils: mergerfs-fusermount mount.mergerfs strip
 	install -D build/mergerfs-fusermount "$(INSTALLBINDIR)/mergerfs-fusermount"
 	install -D build/mount.mergerfs "$(INSTALLSBINDIR)/mount.mergerfs"
-	chmod u+s "$(INSTALLBINDIR)/mergerfs-fusermount"
 
 install: $(INSTALLUTILS)
 
