@@ -21,7 +21,7 @@ EXEC_PREFIX   = $(PREFIX)
 DATAROOTDIR   = $(PREFIX)/share
 DATADIR       = $(DATAROOTDIR)
 BINDIR        = $(EXEC_PREFIX)/bin
-SBINDIR       = /sbin
+SBINDIR       = $(EXEC_PREFIX)/sbin
 MANDIR        = $(DATAROOTDIR)/man
 MAN1DIR       = $(MANDIR)/man1
 
